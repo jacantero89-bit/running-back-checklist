@@ -1,47 +1,119 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Weekly Football Workout</title>
+<meta name="theme-color" content="#101827">
+<title>Football Workout Tracker</title>
 <style>
-body{font-family:Arial,sans-serif;background:#101827;color:white;margin:0;padding:18px}
-main{max-width:600px;margin:auto}
-h1{font-size:26px}
-.day{background:#1b293b;border:1px solid #34465d;border-radius:12px;margin:14px 0;padding:14px}
-h2{margin:0 0 5px}
-p{color:#a9b7c9}
-label{display:flex;gap:12px;padding:12px 0;border-top:1px solid #34465d}
-input{width:22px;height:22px;accent-color:#8bd3a8}
-.done span{text-decoration:line-through;color:#9aa}
-button{padding:10px 14px;border-radius:8px;background:#34465d;color:white;border:0}
+*{box-sizing:border-box}
+body{margin:0;padding:18px;background:#101827;color:#f4f7fb;font:16px/1.45 system-ui,sans-serif}
+main{max-width:620px;margin:auto}
+h1{font-size:26px;margin:4px 0}
+p,.muted{color:#a9b7c9}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.panel{background:#1b293b;border:1px solid #34465d;border-radius:15px;padding:16px;margin:14px 0}
+.dayname{font-size:24px;font-weight:750}
+.focus{color:#a9b7c9;margin:3px 0 12px}
+label{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-top:1px solid #34465d}
+input{width:22px;height:22px;accent-color:#8bd3a8;flex:0 0 auto}
+label.done span{text-decoration:line-through;color:#9ba9ba}
+button{border:1px solid #52657c;border-radius:10px;padding:12px 14px;background:#26384e;color:white;font:inherit;font-weight:650}
+button:disabled{opacity:.4}
+.nav{display:flex;gap:10px}
+.nav button{flex:1}
+.primary{background:#276b4b;border-color:#39865f;width:100%;margin-top:12px}
+.secondary{background:transparent}
+.bar{height:9px;background:#34465d;border-radius:20px;overflow:hidden;margin:9px 0}
+.bar span{display:block;height:100%;background:#8bd3a8;width:0}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#26384e;border-radius:10px;padding:12px}
+.stat strong{display:block;font-size:24px}
+.history-item{border-top:1px solid #34465d;padding:11px 0}
+.hidden{display:none}
+.notice{font-size:13px;color:#a9b7c9}
 </style>
 </head>
 <body>
 <main>
-<h1>Weekly Football Workout</h1>
-<p>Check off each exercise as you complete it. Progress saves on this device.</p>
-<p id="progress">0 completed</p>
-<button onclick="resetWeek()">Reset Week</button>
 
-<div id="workouts"></div>
+<header>
+<div class="top">
+<h1>Football Workout Tracker</h1>
+<button class="secondary" id="historyToggle">Progress</button>
+</div>
+<p>One workout at a time. Check off each exercise, then save the session.</p>
+</header>
+
+<section id="workoutView">
+<div class="panel">
+<div class="top">
+<span class="muted" id="dayCount">DAY 1 OF 7</span>
+<span class="muted" id="dateLabel"></span>
+</div>
+
+<div class="dayname" id="dayName"></div>
+<div class="focus" id="focus"></div>
+<div class="bar"><span id="dayBar"></span></div>
+<div class="muted" id="dayProgress">0 of 0 completed</div>
+
+<div id="exerciseList"></div>
+
+<button class="primary" id="complete">Complete Session & Save</button>
+<p class="notice" id="saveMessage">Sessions save on this iPhone.</p>
+</div>
+
+<div class="nav">
+<button id="prev">← Previous Day</button>
+<button id="next">Next Day →</button>
+</div>
+</section>
+
+<section id="historyView" class="hidden">
+<div class="panel">
+<h2>Progress</h2>
+<div class="stats">
+<div class="stat">
+<strong id="sessionsCount">0</strong>
+<span class="muted">Sessions saved</span>
+</div>
+<div class="stat">
+<strong id="avgCompletion">0%</strong>
+<span class="muted">Average completion</span>
+</div>
+</div>
+<h3>Session history</h3>
+<div id="historyList" class="muted">No sessions saved yet.</div>
+</div>
+<button class="secondary" id="backToWorkout">← Back to workout</button>
+</section>
+
+<p class="notice">
+Saved history stays in this browser on this iPhone.
+Clearing website data can erase it.
+</p>
+
 </main>
+
 <script>
 const days=[
-["Monday","Chest and Arms",[
+["Monday","Chest and arms",[
 "Dumbbell floor press — 2 × 8",
 "Incline push-ups — 2 × 8",
 "Dumbbell curls — 2 × 10",
 "Tricep extensions — 2 × 10",
-"Dead bugs — 2 × 8"]],
-["Tuesday","Legs and Back",[
+"Dead bugs — 2 × 8"
+]],
+["Tuesday","Legs and back",[
 "Bulgarian split squats — 2 × 6 each leg",
 "Goblet squats — 2 × 8",
 "Dumbbell Romanian deadlifts — 2 × 8",
 "Rows / pull-aparts — 2 × 10",
 "Calf raises — 2 × 12",
-"Bird dogs — 2 × 8 each side"]],
-["Wednesday","Speed and Running Back Drills",[
+"Bird dogs — 2 × 8 each side"
+]],
+["Wednesday","Speed and running back drills",[
 "Dynamic warm-up — 5–8 minutes",
 "5-yard starts — 4 reps",
 "10-yard sprints — 4 reps",
@@ -49,63 +121,227 @@ const days=[
 "5-10-5 shuttle technique practice",
 "One-cut drills — both directions",
 "Two-cut drills — controlled",
-"Ball security practice"]],
-["Thursday","Chest and Arms",[
+"Ball security practice"
+]],
+["Thursday","Chest and arms",[
 "Dumbbell floor press — 2 × 8",
 "Incline push-ups — 2 × 8",
 "Dumbbell curls — 2 × 10",
 "Tricep extensions — 2 × 10",
-"Dead bugs — 2 × 8"]],
-["Friday","Legs and Back",[
+"Dead bugs — 2 × 8"
+]],
+["Friday","Legs and back",[
 "Bulgarian split squats — 2 × 6 each leg",
 "Goblet squats — 2 × 8",
 "Dumbbell Romanian deadlifts — 2 × 8",
 "Rows / pull-aparts — 2 × 10",
 "Calf raises — 2 × 12",
-"Bird dogs — 2 × 8 each side"]],
-["Saturday","Speed and Running Back Drills",[
+"Bird dogs — 2 × 8 each side"
+]],
+["Saturday","Speed and running back drills",[
 "Dynamic warm-up — 5–8 minutes",
 "Short sprints — 4 × 10 yards",
 "10-yard runs — 2 reps",
 "T-step drills",
 "Weave + crossover to break",
 "Ball security",
-"Pass catching — 20–25 catches"]],
-["Sunday","Rest",["Rest and recover"]]
+"Pass catching — 20–25 catches"
+]],
+["Sunday","Rest",[
+"Rest and recover"
+]]
 ];
 
-const root=document.getElementById("workouts");
-days.forEach((day,d)=>{
- const section=document.createElement("section");
- section.className="day";
- section.innerHTML="<h2>"+day[0]+"</h2><p>"+day[1]+"</p>";
- day[2].forEach((exercise,i)=>{
-  const id="d"+d+"e"+i;
-  const label=document.createElement("label");
-  label.innerHTML='<input type="checkbox" id="'+id+'"><span>'+exercise+'</span>';
-  section.appendChild(label);
-  const box=label.querySelector("input");
-  box.checked=localStorage.getItem(id)==="1";
-  box.addEventListener("change",()=>{
-   localStorage.setItem(id,box.checked?"1":"0");
-   update();
-  });
- });
- root.appendChild(section);
+const KEYS={
+day:"fb-current-day-v2",
+checks:"fb-checks-v2",
+sessions:"fb-sessions-v2"
+};
+
+let dayIndex=Math.min(6,Math.max(0,
+Number(localStorage.getItem(KEYS.day)||0)));
+
+let checks=JSON.parse(localStorage.getItem(KEYS.checks)||"{}");
+let sessions=JSON.parse(localStorage.getItem(KEYS.sessions)||"[]");
+
+const $=id=>document.getElementById(id);
+
+function save(){
+localStorage.setItem(KEYS.day,String(dayIndex));
+localStorage.setItem(KEYS.checks,JSON.stringify(checks));
+localStorage.setItem(KEYS.sessions,JSON.stringify(sessions));
+}
+
+function renderDay(){
+const d=days[dayIndex];
+
+$("dayCount").textContent="DAY "+(dayIndex+1)+" OF 7";
+$("dayName").textContent=d[0];
+$("focus").textContent=d[1];
+
+$("dateLabel").textContent=new Date().toLocaleDateString(
+undefined,{month:"short",day:"numeric"}
+);
+
+const list=$("exerciseList");
+list.innerHTML="";
+
+d[2].forEach((exercise,i)=>{
+const id=dayIndex+"-"+i;
+const label=document.createElement("label");
+const cb=document.createElement("input");
+cb.type="checkbox";
+cb.checked=!!checks[id];
+
+const span=document.createElement("span");
+span.textContent=exercise;
+
+label.append(cb,span);
+if(cb.checked)label.classList.add("done");
+
+cb.addEventListener("change",()=>{
+checks[id]=cb.checked;
+save();
+label.classList.toggle("done",cb.checked);
+updateProgress();
 });
-function update(){
- const boxes=[...document.querySelectorAll("input")];
- const done=boxes.filter(b=>b.checked).length;
- document.getElementById("progress").textContent=done+" of "+boxes.length+" exercises completed";
- boxes.forEach(b=>b.parentElement.classList.toggle("done",b.checked));
+
+list.append(label);
+});
+
+$("prev").disabled=dayIndex===0;
+$("next").disabled=dayIndex===6;
+
+updateProgress();
 }
-function resetWeek(){
- document.querySelectorAll("input").forEach(b=>{
-  b.checked=false;localStorage.removeItem(b.id);
- });
- update();
+
+function updateProgress(){
+const n=days[dayIndex][2].length;
+const done=days[dayIndex][2].filter(
+(_,i)=>!!checks[dayIndex+"-"+i]
+).length;
+
+$("dayProgress").textContent=done+" of "+n+" completed";
+$("dayBar").style.width=(done/n*100)+"%";
 }
-update();
+
+$("prev").onclick=()=>{
+if(dayIndex>0){
+dayIndex--;
+save();
+renderDay();
+}
+};
+
+$("next").onclick=()=>{
+if(dayIndex<6){
+dayIndex++;
+save();
+renderDay();
+}
+};
+
+$("complete").onclick=()=>{
+const exercises=days[dayIndex][2];
+const completed=exercises.filter(
+(_,i)=>!!checks[dayIndex+"-"+i]
+);
+
+const pct=Math.round(completed.length/exercises.length*100);
+
+sessions.unshift({
+day:days[dayIndex][0],
+focus:days[dayIndex][1],
+date:new Date().toISOString(),
+completed:completed.length,
+total:exercises.length,
+pct:pct,
+items:completed
+});
+
+save();
+
+$("saveMessage").textContent=
+"Session saved! "+pct+"% completed ("+
+completed.length+"/"+exercises.length+").";
+
+renderHistory();
+};
+
+function renderHistory(){
+$("sessionsCount").textContent=sessions.length;
+
+const avg=sessions.length?
+Math.round(sessions.reduce((a,s)=>a+s.pct,0)/sessions.length):0;
+
+$("avgCompletion").textContent=avg+"%";
+
+const list=$("historyList");
+list.innerHTML="";
+
+if(!sessions.length){
+list.textContent="No sessions saved yet.";
+return;
+}
+
+sessions.forEach(s=>{
+const item=document.createElement("div");
+item.className="history-item";
+
+const when=new Date(s.date).toLocaleString(
+undefined,{
+month:"short",
+day:"numeric",
+year:"numeric",
+hour:"numeric",
+minute:"2-digit"
+}
+);
+
+const title=document.createElement("strong");
+title.textContent=s.day+" — "+s.focus;
+
+const detail=document.createElement("div");
+detail.className="muted";
+detail.textContent=when+" · "+s.completed+"/"+s.total+
+" exercises · "+s.pct+"%";
+
+item.append(title,detail);
+
+if(s.items&&s.items.length){
+const more=document.createElement("details");
+const summary=document.createElement("summary");
+summary.textContent="View completed exercises";
+
+const ul=document.createElement("ul");
+
+s.items.forEach(x=>{
+const li=document.createElement("li");
+li.textContent=x;
+ul.append(li);
+});
+
+more.append(summary,ul);
+item.append(more);
+}
+
+list.append(item);
+});
+}
+
+function showHistory(show){
+$("workoutView").classList.toggle("hidden",show);
+$("historyView").classList.toggle("hidden",!show);
+$("historyToggle").classList.toggle("hidden",show);
+
+if(show)renderHistory();
+}
+
+$("historyToggle").onclick=()=>showHistory(true);
+$("backToWorkout").onclick=()=>showHistory(false);
+
+renderDay();
+renderHistory();
 </script>
 </body>
 </html>
