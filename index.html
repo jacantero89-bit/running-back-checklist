@@ -4,75 +4,114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#101827">
-<title>Football Workout Tracker</title>
+<title>Football Training Tracker</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;padding:18px;background:#101827;color:#f4f7fb;font:16px/1.45 system-ui,sans-serif}
-main{max-width:620px;margin:auto}
-h1{font-size:26px;margin:4px 0}
-p,.muted{color:#a9b7c9}
-.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.panel{background:#1b293b;border:1px solid #34465d;border-radius:15px;padding:16px;margin:14px 0}
-.dayname{font-size:24px;font-weight:750}
-.focus{color:#a9b7c9;margin:3px 0 12px}
-label{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-top:1px solid #34465d}
-input{width:22px;height:22px;accent-color:#8bd3a8;flex:0 0 auto}
-label.done span{text-decoration:line-through;color:#9ba9ba}
-button{border:1px solid #52657c;border-radius:10px;padding:12px 14px;background:#26384e;color:white;font:inherit;font-weight:650}
-button:disabled{opacity:.4}
-.nav{display:flex;gap:10px}
-.nav button{flex:1}
-.primary{background:#276b4b;border-color:#39865f;width:100%;margin-top:12px}
-.secondary{background:transparent}
-.bar{height:9px;background:#34465d;border-radius:20px;overflow:hidden;margin:9px 0}
-.bar span{display:block;height:100%;background:#8bd3a8;width:0}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.stat{background:#26384e;border-radius:10px;padding:12px}
-.stat strong{display:block;font-size:24px}
-.history-item{border-top:1px solid #34465d;padding:11px 0}
-.hidden{display:none}
-.notice{font-size:13px;color:#a9b7c9}
+body{margin:0;background:#111b2a;color:#fff;font-family:Arial,sans-serif}
+header{background:#18283b;padding:22px 16px;text-align:center;border-bottom:3px solid #70d69b}
+header h1{margin:0;font-size:25px}
+header p{color:#b8c8d9;margin:8px 0 0}
+main{max-width:650px;margin:auto;padding:16px}
+.panel{background:#1e3045;border:1px solid #34465d;border-radius:15px;padding:18px;margin-bottom:16px}
+h2{margin:0 0 12px;font-size:22px}
+.muted{color:#b8c8d9}
+.day-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}
+.day-nav button{width:auto;padding:11px 12px}
+.day-heading{text-align:center}
+.day-heading strong{display:block;font-size:21px}
+.day-heading span{display:block;color:#a9b7c9;font-size:13px;margin-top:4px}
+button{background:#70d69b;border:0;border-radius:10px;padding:13px 16px;font-weight:bold;color:#10251a;cursor:pointer;font-size:15px}
+button.secondary{background:#34465d;color:white}
+button:disabled{opacity:.5;cursor:not-allowed}
+.full{width:100%}
+.exercise{display:flex;gap:12px;align-items:center;padding:15px 5px;border-bottom:1px solid #34465d;cursor:pointer}
+.exercise:last-child{border-bottom:0}
+.exercise input{width:23px;height:23px;accent-color:#70d69b;flex-shrink:0}
+.exercise span{line-height:1.4}
+.exercise.done span{text-decoration:line-through;color:#a9b7c9}
+.progress-bg{height:13px;background:#34465d;border-radius:20px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;width:0;background:#70d69b;transition:width .2s}
+.actions{display:grid;gap:10px}
+.tabs{display:flex;gap:10px;margin-bottom:16px}
+.tabs button{flex:1}
+.tabs button.active{background:#70d69b;color:#10251a}
+.hidden{display:none!important}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat{background:#26384e;border-radius:10px;padding:13px;text-align:center}
+.stat strong{display:block;font-size:24px;color:#70d69b}
+.stat span{font-size:12px}
+.calendar-head{display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px;gap:8px}
+.calendar-head button{padding:9px 15px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;text-align:center}
+.weekday{font-size:11px;color:#a9b7c9;padding:5px 0}
+.calday{min-width:0;min-height:52px;padding:5px 2px;border:1px solid #34465d;border-radius:9px;background:#26384e;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.calday.empty{visibility:hidden}
+.calday.selected{outline:2px solid #8bd3a8}
+.calday .mark{font-size:17px;color:#8bd3a8;font-weight:800}
+.calday .num{font-size:13px}
+.day-detail{margin-top:14px;padding:14px;background:#26384e;border-radius:10px;line-height:1.5}
+.day-detail ul{padding-left:20px}
+.day-detail li{margin-bottom:7px}
+.calendar-note{font-size:13px;color:#a9b7c9;line-height:1.5}
+.notice{margin-top:10px;color:#8bd3a8;font-size:14px;text-align:center}
+footer{text-align:center;color:#8d9fb3;font-size:12px;padding:16px;line-height:1.5}
 </style>
 </head>
+
 <body>
-<main>
 
 <header>
-<div class="top">
-<h1>Football Workout Tracker</h1>
-<button class="secondary" id="historyToggle">Progress</button>
-</div>
-<p>One workout at a time. Check off each exercise, then save the session.</p>
+<h1>🏈 Football Training Tracker</h1>
+<p>Strength • Speed • Agility • Running Back Skills</p>
 </header>
 
-<section id="workoutView">
-<div class="panel">
-<div class="top">
-<span class="muted" id="dayCount">DAY 1 OF 7</span>
-<span class="muted" id="dateLabel"></span>
+<main>
+
+<div class="tabs">
+<button id="workoutTab" class="active">Today's Workout</button>
+<button id="historyTab" class="secondary">📅 History</button>
 </div>
 
-<div class="dayname" id="dayName"></div>
-<div class="focus" id="focus"></div>
-<div class="bar"><span id="dayBar"></span></div>
-<div class="muted" id="dayProgress">0 of 0 completed</div>
+<section id="workoutView">
+
+<div class="panel">
+<div class="day-nav">
+<button id="prevDay" class="secondary">‹ Previous</button>
+<div class="day-heading">
+<strong id="dayName"></strong>
+<span id="dayFocus"></span>
+</div>
+<button id="nextDay" class="secondary">Next ›</button>
+</div>
 
 <div id="exerciseList"></div>
-
-<button class="primary" id="complete">Complete Session & Save</button>
-<p class="notice" id="saveMessage">Sessions save on this iPhone.</p>
 </div>
 
-<div class="nav">
-<button id="prev">← Previous Day</button>
-<button id="next">Next Day →</button>
+<div class="panel">
+<div style="display:flex;justify-content:space-between;gap:10px">
+<strong>Workout Progress</strong>
+<strong id="progressText">0 / 0</strong>
 </div>
+
+<div class="progress-bg">
+<div class="progress-fill" id="progressFill"></div>
+</div>
+
+<div class="actions">
+<button id="completeBtn" class="full">✓ Complete Session & Save</button>
+<button id="resetBtn" class="secondary full">Reset Today's Checkboxes</button>
+</div>
+
+<div id="saveNotice" class="notice"></div>
+</div>
+
 </section>
 
 <section id="historyView" class="hidden">
 <div class="panel">
-<h2>Progress</h2>
+<h2>Workout Calendar</h2>
+
 <div class="stats">
 <div class="stat">
 <strong id="sessionsCount">0</strong>
@@ -83,265 +122,493 @@ button:disabled{opacity:.4}
 <span class="muted">Average completion</span>
 </div>
 </div>
-<h3>Session history</h3>
-<div id="historyList" class="muted">No sessions saved yet.</div>
+
+<div class="calendar-head">
+<button id="monthPrev" class="secondary">‹</button>
+<strong id="monthLabel"></strong>
+<button id="monthNext" class="secondary">›</button>
 </div>
-<button class="secondary" id="backToWorkout">← Back to workout</button>
+
+<div class="calendar-grid" id="calendarGrid"></div>
+
+<p class="calendar-note">
+Green X = a saved workout session. Tap any date to see what was done.
+</p>
+
+<div id="dayDetail" class="day-detail muted">
+Choose a date to view its workout.
+</div>
+</div>
+
+<button class="secondary full" id="backToWorkout">← Back to Workout</button>
 </section>
 
-<p class="notice">
-Saved history stays in this browser on this iPhone.
-Clearing website data can erase it.
-</p>
+<footer>
+Workout history is saved in this browser on this device.
+Clearing browser data may erase saved sessions.
+</footer>
 
 </main>
 
 <script>
-const days=[
-["Monday","Chest and arms",[
-"Dumbbell floor press — 2 × 8",
-"Incline push-ups — 2 × 8",
-"Dumbbell curls — 2 × 10",
-"Tricep extensions — 2 × 10",
-"Dead bugs — 2 × 8"
-]],
-["Tuesday","Legs and back",[
-"Bulgarian split squats — 2 × 6 each leg",
-"Goblet squats — 2 × 8",
-"Dumbbell Romanian deadlifts — 2 × 8",
-"Rows / pull-aparts — 2 × 10",
-"Calf raises — 2 × 12",
-"Bird dogs — 2 × 8 each side"
-]],
-["Wednesday","Speed and running back drills",[
-"Dynamic warm-up — 5–8 minutes",
-"5-yard starts — 4 reps",
-"10-yard sprints — 4 reps",
-"Agility ladder — 4 patterns × 2",
-"5-10-5 shuttle technique practice",
-"One-cut drills — both directions",
-"Two-cut drills — controlled",
-"Ball security practice"
-]],
-["Thursday","Chest and arms",[
-"Dumbbell floor press — 2 × 8",
-"Incline push-ups — 2 × 8",
-"Dumbbell curls — 2 × 10",
-"Tricep extensions — 2 × 10",
-"Dead bugs — 2 × 8"
-]],
-["Friday","Legs and back",[
-"Bulgarian split squats — 2 × 6 each leg",
-"Goblet squats — 2 × 8",
-"Dumbbell Romanian deadlifts — 2 × 8",
-"Rows / pull-aparts — 2 × 10",
-"Calf raises — 2 × 12",
-"Bird dogs — 2 × 8 each side"
-]],
-["Saturday","Speed and running back drills",[
-"Dynamic warm-up — 5–8 minutes",
-"Short sprints — 4 × 10 yards",
-"10-yard runs — 2 reps",
-"T-step drills",
-"Weave + crossover to break",
-"Ball security",
-"Pass catching — 20–25 catches"
-]],
-["Sunday","Rest",[
-"Rest and recover"
-]]
+const workouts=[
+{
+day:"Monday",
+focus:"Chest & Arms",
+exercises:[
+"Dumbbell Floor Press — 2 sets of 8",
+"Incline Push-Ups — 2 sets of 8",
+"Dumbbell Curls — 2 sets of 10",
+"Tricep Extensions — 2 sets of 10",
+"Dead Bugs — 2 sets of 8"
+]
+},
+{
+day:"Tuesday",
+focus:"Legs & Back",
+exercises:[
+"Bulgarian Split Squats — 2 sets of 6 each leg",
+"Goblet Squats — 2 sets of 8",
+"Dumbbell Romanian Deadlifts — 2 sets of 8",
+"Rows or Band Pull-Aparts — 2 sets of 10",
+"Calf Raises — 2 sets of 12",
+"Bird Dogs — 2 sets of 8 each side"
+]
+},
+{
+day:"Wednesday",
+focus:"Speed, Agility & Running Back",
+exercises:[
+"Dynamic Warm-Up — 5–8 minutes",
+"5-Yard Starts — 4 reps",
+"10-Yard Sprints — 4 reps",
+"Agility Ladder — 4 patterns, 2 rounds each",
+"5-10-5 Shuttle — technique practice",
+"One-Cut Drills — both directions",
+"Two-Cut Drills — controlled reps",
+"Ball Security Drills"
+]
+},
+{
+day:"Thursday",
+focus:"Chest & Arms",
+exercises:[
+"Dumbbell Floor Press — 2 sets of 8",
+"Incline Push-Ups — 2 sets of 8",
+"Dumbbell Curls — 2 sets of 10",
+"Tricep Extensions — 2 sets of 10",
+"Dead Bugs — 2 sets of 8"
+]
+},
+{
+day:"Friday",
+focus:"Legs & Back",
+exercises:[
+"Bulgarian Split Squats — 2 sets of 6 each leg",
+"Goblet Squats — 2 sets of 8",
+"Dumbbell Romanian Deadlifts — 2 sets of 8",
+"Rows or Band Pull-Aparts — 2 sets of 10",
+"Calf Raises — 2 sets of 12",
+"Bird Dogs — 2 sets of 8 each side"
+]
+},
+{
+day:"Saturday",
+focus:"Speed, Agility & Running Back",
+exercises:[
+"Dynamic Warm-Up — 5–8 minutes",
+"Short Sprints — 4 x 10 yards",
+"10-Yard Runs — 2 reps",
+"T-Step Drills",
+"Weave + Crossover to Break",
+"Ball Security Drills",
+"Pass Catching — 20–25 catches"
+]
+},
+{
+day:"Sunday",
+focus:"Rest & Recovery",
+exercises:[
+"Rest, Recover & Hydrate",
+"Optional Gentle Stretching"
+]
+}
 ];
-
-const KEYS={
-day:"fb-current-day-v2",
-checks:"fb-checks-v2",
-sessions:"fb-sessions-v2"
-};
-
-let dayIndex=Math.min(6,Math.max(0,
-Number(localStorage.getItem(KEYS.day)||0)));
-
-let checks=JSON.parse(localStorage.getItem(KEYS.checks)||"{}");
-let sessions=JSON.parse(localStorage.getItem(KEYS.sessions)||"[]");
 
 const $=id=>document.getElementById(id);
 
-function save(){
-localStorage.setItem(KEYS.day,String(dayIndex));
-localStorage.setItem(KEYS.checks,JSON.stringify(checks));
-localStorage.setItem(KEYS.sessions,JSON.stringify(sessions));
+function load(key,fallback){
+try{
+const value=localStorage.getItem(key);
+return value===null?fallback:JSON.parse(value);
+}catch(e){
+return fallback;
+}
 }
 
-function renderDay(){
-const d=days[dayIndex];
+function save(key,value){
+try{
+localStorage.setItem(key,JSON.stringify(value));
+return true;
+}catch(e){
+alert("Could not save data on this device.");
+return false;
+}
+}
 
-$("dayCount").textContent="DAY "+(dayIndex+1)+" OF 7";
-$("dayName").textContent=d[0];
-$("focus").textContent=d[1];
+const DAY_KEY="fb-current-day-v2";
+const CHECK_KEY="fb-checks-v2";
+const SESSION_KEY="fb-sessions-v2";
 
-$("dateLabel").textContent=new Date().toLocaleDateString(
-undefined,{month:"short",day:"numeric"}
-);
+let dayIndex=load(DAY_KEY,0);
+
+if(!Number.isInteger(dayIndex)||dayIndex<0||dayIndex>6){
+dayIndex=0;
+}
+
+let checks=load(CHECK_KEY,{});
+if(!checks||typeof checks!=="object"||Array.isArray(checks)){
+checks={};
+}
+
+let sessions=load(SESSION_KEY,[]);
+if(!Array.isArray(sessions))sessions=[];
+
+let calendarMonth=new Date();
+calendarMonth.setDate(1);
+let selectedCalendarDate=null;
+
+function getChecks(){
+const key=String(dayIndex);
+if(!Array.isArray(checks[key])){
+checks[key]=[];
+}
+return checks[key];
+}
+
+function renderWorkout(){
+const workout=workouts[dayIndex];
+
+$("dayName").textContent=workout.day;
+$("dayFocus").textContent=workout.focus;
 
 const list=$("exerciseList");
 list.innerHTML="";
 
-d[2].forEach((exercise,i)=>{
-const id=dayIndex+"-"+i;
+const currentChecks=getChecks();
+
+workout.exercises.forEach((exercise,index)=>{
 const label=document.createElement("label");
-const cb=document.createElement("input");
-cb.type="checkbox";
-cb.checked=!!checks[id];
+label.className="exercise";
+
+const checkbox=document.createElement("input");
+checkbox.type="checkbox";
+checkbox.checked=Boolean(currentChecks[index]);
 
 const span=document.createElement("span");
 span.textContent=exercise;
 
-label.append(cb,span);
-if(cb.checked)label.classList.add("done");
+if(checkbox.checked){
+label.classList.add("done");
+}
 
-cb.addEventListener("change",()=>{
-checks[id]=cb.checked;
-save();
-label.classList.toggle("done",cb.checked);
+checkbox.addEventListener("change",()=>{
+const arr=getChecks();
+arr[index]=checkbox.checked;
+save(CHECK_KEY,checks);
+label.classList.toggle("done",checkbox.checked);
 updateProgress();
+$("saveNotice").textContent="";
 });
 
+label.append(checkbox,span);
 list.append(label);
 });
 
-$("prev").disabled=dayIndex===0;
-$("next").disabled=dayIndex===6;
-
 updateProgress();
+$("saveNotice").textContent="";
 }
 
 function updateProgress(){
-const n=days[dayIndex][2].length;
-const done=days[dayIndex][2].filter(
-(_,i)=>!!checks[dayIndex+"-"+i]
+const total=workouts[dayIndex].exercises.length;
+const arr=getChecks();
+
+const completed=workouts[dayIndex].exercises.filter(
+(_,index)=>Boolean(arr[index])
 ).length;
 
-$("dayProgress").textContent=done+" of "+n+" completed";
-$("dayBar").style.width=(done/n*100)+"%";
+const pct=total?Math.round(completed/total*100):0;
+
+$("progressText").textContent=
+completed+" / "+total+" ("+pct+"%)";
+
+$("progressFill").style.width=pct+"%";
 }
 
-$("prev").onclick=()=>{
-if(dayIndex>0){
-dayIndex--;
-save();
-renderDay();
+function changeDay(direction){
+dayIndex=(dayIndex+direction+7)%7;
+save(DAY_KEY,dayIndex);
+renderWorkout();
 }
+
+$("prevDay").onclick=()=>changeDay(-1);
+$("nextDay").onclick=()=>changeDay(1);
+
+$("resetBtn").onclick=()=>{
+if(!confirm("Clear the checkboxes for "+workouts[dayIndex].day+"?")){
+return;
+}
+
+checks[String(dayIndex)]=[];
+save(CHECK_KEY,checks);
+renderWorkout();
 };
 
-$("next").onclick=()=>{
-if(dayIndex<6){
-dayIndex++;
-save();
-renderDay();
-}
-};
+$("completeBtn").onclick=()=>{
+const workout=workouts[dayIndex];
+const arr=getChecks();
 
-$("complete").onclick=()=>{
-const exercises=days[dayIndex][2];
-const completed=exercises.filter(
-(_,i)=>!!checks[dayIndex+"-"+i]
+const items=workout.exercises.filter(
+(_,index)=>Boolean(arr[index])
 );
 
-const pct=Math.round(completed.length/exercises.length*100);
+const completed=items.length;
+const total=workout.exercises.length;
+const pct=Math.round(completed/total*100);
 
-sessions.unshift({
-day:days[dayIndex][0],
-focus:days[dayIndex][1],
-date:new Date().toISOString(),
-completed:completed.length,
-total:exercises.length,
+if(completed===0){
+alert("Check off at least one exercise before saving.");
+return;
+}
+
+const now=new Date();
+
+const session={
+day:workout.day,
+focus:workout.focus,
+date:now.toISOString(),
+localDate:dateKey(now),
+completed:completed,
+total:total,
 pct:pct,
-items:completed
-});
-
-save();
-
-$("saveMessage").textContent=
-"Session saved! "+pct+"% completed ("+
-completed.length+"/"+exercises.length+").";
-
-renderHistory();
+items:items
 };
+
+sessions.push(session);
+
+if(save(SESSION_KEY,sessions)){
+$("saveNotice").textContent=
+"✓ Session saved to your calendar!";
+}
+};
+
+function dateKey(date){
+return date.getFullYear()+"-"+
+String(date.getMonth()+1).padStart(2,"0")+"-"+
+String(date.getDate()).padStart(2,"0");
+}
+
+function sessionDateKey(session){
+if(session.localDate){
+return session.localDate;
+}
+return dateKey(new Date(session.date));
+}
 
 function renderHistory(){
 $("sessionsCount").textContent=sessions.length;
 
-const avg=sessions.length?
-Math.round(sessions.reduce((a,s)=>a+s.pct,0)/sessions.length):0;
+const avg=sessions.length
+?Math.round(
+sessions.reduce((sum,s)=>sum+(Number(s.pct)||0),0)/sessions.length
+)
+:0;
 
 $("avgCompletion").textContent=avg+"%";
 
-const list=$("historyList");
-list.innerHTML="";
+const year=calendarMonth.getFullYear();
+const month=calendarMonth.getMonth();
 
-if(!sessions.length){
-list.textContent="No sessions saved yet.";
+$("monthLabel").textContent=calendarMonth.toLocaleDateString(
+undefined,
+{month:"long",year:"numeric"}
+);
+
+const grid=$("calendarGrid");
+grid.innerHTML="";
+
+["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(name=>{
+const el=document.createElement("div");
+el.className="weekday";
+el.textContent=name;
+grid.append(el);
+});
+
+const firstDay=new Date(year,month,1).getDay();
+const daysInMonth=new Date(year,month+1,0).getDate();
+
+for(let i=0;i<firstDay;i++){
+const blank=document.createElement("div");
+blank.className="calday empty";
+grid.append(blank);
+}
+
+for(let day=1;day<=daysInMonth;day++){
+const date=new Date(year,month,day);
+const key=dateKey(date);
+
+const matching=sessions.filter(
+s=>sessionDateKey(s)===key
+);
+
+const btn=document.createElement("button");
+btn.type="button";
+btn.className="calday"+
+(selectedCalendarDate===key?" selected":"");
+
+const num=document.createElement("span");
+num.className="num";
+num.textContent=day;
+btn.append(num);
+
+if(matching.length){
+const mark=document.createElement("span");
+mark.className="mark";
+mark.textContent="X";
+btn.append(mark);
+}
+
+btn.onclick=()=>{
+selectedCalendarDate=key;
+renderHistory();
+};
+
+grid.append(btn);
+}
+
+renderDayDetail();
+}
+
+function renderDayDetail(){
+const detail=$("dayDetail");
+detail.innerHTML="";
+
+if(!selectedCalendarDate){
+detail.textContent="Choose a date to view its workout.";
 return;
 }
 
-sessions.forEach(s=>{
-const item=document.createElement("div");
-item.className="history-item";
+const parts=selectedCalendarDate.split("-").map(Number);
 
-const when=new Date(s.date).toLocaleString(
-undefined,{
-month:"short",
+const chosen=new Date(
+parts[0],
+parts[1]-1,
+parts[2]
+);
+
+const heading=document.createElement("strong");
+
+heading.textContent=chosen.toLocaleDateString(
+undefined,
+{
+weekday:"long",
+month:"long",
 day:"numeric",
-year:"numeric",
-hour:"numeric",
-minute:"2-digit"
+year:"numeric"
 }
 );
 
-const title=document.createElement("strong");
-title.textContent=s.day+" — "+s.focus;
+detail.append(heading);
 
-const detail=document.createElement("div");
-detail.className="muted";
-detail.textContent=when+" · "+s.completed+"/"+s.total+
+const selected=sessions.filter(
+s=>sessionDateKey(s)===selectedCalendarDate
+);
+
+if(!selected.length){
+const p=document.createElement("p");
+p.textContent="No saved workout on this day.";
+detail.append(p);
+return;
+}
+
+selected.forEach(s=>{
+const sub=document.createElement("p");
+
+sub.textContent=
+s.day+" — "+s.focus+
+" · "+s.completed+"/"+s.total+
 " exercises · "+s.pct+"%";
 
-item.append(title,detail);
+detail.append(sub);
 
-if(s.items&&s.items.length){
-const more=document.createElement("details");
-const summary=document.createElement("summary");
-summary.textContent="View completed exercises";
-
+if(Array.isArray(s.items)&&s.items.length){
 const ul=document.createElement("ul");
 
-s.items.forEach(x=>{
+s.items.forEach(item=>{
 const li=document.createElement("li");
-li.textContent=x;
+li.textContent=item;
 ul.append(li);
 });
 
-more.append(summary,ul);
-item.append(more);
+detail.append(ul);
+}else{
+const p=document.createElement("p");
+p.textContent="No individual exercises recorded.";
+detail.append(p);
 }
-
-list.append(item);
 });
 }
 
-function showHistory(show){
-$("workoutView").classList.toggle("hidden",show);
-$("historyView").classList.toggle("hidden",!show);
-$("historyToggle").classList.toggle("hidden",show);
+$("monthPrev").onclick=()=>{
+calendarMonth=new Date(
+calendarMonth.getFullYear(),
+calendarMonth.getMonth()-1,
+1
+);
+selectedCalendarDate=null;
+renderHistory();
+};
 
-if(show)renderHistory();
+$("monthNext").onclick=()=>{
+calendarMonth=new Date(
+calendarMonth.getFullYear(),
+calendarMonth.getMonth()+1,
+1
+);
+selectedCalendarDate=null;
+renderHistory();
+};
+
+function showWorkout(){
+$("workoutView").classList.remove("hidden");
+$("historyView").classList.add("hidden");
+
+$("workoutTab").classList.add("active");
+$("workoutTab").classList.remove("secondary");
+
+$("historyTab").classList.remove("active");
+$("historyTab").classList.add("secondary");
 }
 
-$("historyToggle").onclick=()=>showHistory(true);
-$("backToWorkout").onclick=()=>showHistory(false);
+function showHistory(){
+$("workoutView").classList.add("hidden");
+$("historyView").classList.remove("hidden");
 
-renderDay();
+$("historyTab").classList.add("active");
+$("historyTab").classList.remove("secondary");
+
+$("workoutTab").classList.remove("active");
+$("workoutTab").classList.add("secondary");
+
 renderHistory();
+}
+
+$("workoutTab").onclick=showWorkout;
+$("historyTab").onclick=showHistory;
+$("backToWorkout").onclick=showWorkout;
+
+renderWorkout();
 </script>
+
 </body>
 </html>
