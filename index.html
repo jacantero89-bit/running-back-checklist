@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Football Workout</title>
+<style>
+body{font-family:Arial,sans-serif;background:#101827;color:white;margin:0;padding:18px}
+main{max-width:600px;margin:auto}
+h1{font-size:26px}
+.day{background:#1b293b;border:1px solid #34465d;border-radius:12px;margin:14px 0;padding:14px}
+h2{margin:0 0 5px}
+p{color:#a9b7c9}
+label{display:flex;gap:12px;padding:12px 0;border-top:1px solid #34465d}
+input{width:22px;height:22px;accent-color:#8bd3a8}
+.done span{text-decoration:line-through;color:#9aa}
+button{padding:10px 14px;border-radius:8px;background:#34465d;color:white;border:0}
+</style>
+</head>
+<body>
+<main>
+<h1>Weekly Football Workout</h1>
+<p>Check off each exercise as you complete it. Progress saves on this device.</p>
+<p id="progress">0 completed</p>
+<button onclick="resetWeek()">Reset Week</button>
+
+<div id="workouts"></div>
+</main>
+<script>
+const days=[
+["Monday","Chest and Arms",[
+"Dumbbell floor press — 2 × 8",
+"Incline push-ups — 2 × 8",
+"Dumbbell curls — 2 × 10",
+"Tricep extensions — 2 × 10",
+"Dead bugs — 2 × 8"]],
+["Tuesday","Legs and Back",[
+"Bulgarian split squats — 2 × 6 each leg",
+"Goblet squats — 2 × 8",
+"Dumbbell Romanian deadlifts — 2 × 8",
+"Rows / pull-aparts — 2 × 10",
+"Calf raises — 2 × 12",
+"Bird dogs — 2 × 8 each side"]],
+["Wednesday","Speed and Running Back Drills",[
+"Dynamic warm-up — 5–8 minutes",
+"5-yard starts — 4 reps",
+"10-yard sprints — 4 reps",
+"Agility ladder — 4 patterns × 2",
+"5-10-5 shuttle technique practice",
+"One-cut drills — both directions",
+"Two-cut drills — controlled",
+"Ball security practice"]],
+["Thursday","Chest and Arms",[
+"Dumbbell floor press — 2 × 8",
+"Incline push-ups — 2 × 8",
+"Dumbbell curls — 2 × 10",
+"Tricep extensions — 2 × 10",
+"Dead bugs — 2 × 8"]],
+["Friday","Legs and Back",[
+"Bulgarian split squats — 2 × 6 each leg",
+"Goblet squats — 2 × 8",
+"Dumbbell Romanian deadlifts — 2 × 8",
+"Rows / pull-aparts — 2 × 10",
+"Calf raises — 2 × 12",
+"Bird dogs — 2 × 8 each side"]],
+["Saturday","Speed and Running Back Drills",[
+"Dynamic warm-up — 5–8 minutes",
+"Short sprints — 4 × 10 yards",
+"10-yard runs — 2 reps",
+"T-step drills",
+"Weave + crossover to break",
+"Ball security",
+"Pass catching — 20–25 catches"]],
+["Sunday","Rest",["Rest and recover"]]
+];
+
+const root=document.getElementById("workouts");
+days.forEach((day,d)=>{
+ const section=document.createElement("section");
+ section.className="day";
+ section.innerHTML="<h2>"+day[0]+"</h2><p>"+day[1]+"</p>";
+ day[2].forEach((exercise,i)=>{
+  const id="d"+d+"e"+i;
+  const label=document.createElement("label");
+  label.innerHTML='<input type="checkbox" id="'+id+'"><span>'+exercise+'</span>';
+  section.appendChild(label);
+  const box=label.querySelector("input");
+  box.checked=localStorage.getItem(id)==="1";
+  box.addEventListener("change",()=>{
+   localStorage.setItem(id,box.checked?"1":"0");
+   update();
+  });
+ });
+ root.appendChild(section);
+});
+function update(){
+ const boxes=[...document.querySelectorAll("input")];
+ const done=boxes.filter(b=>b.checked).length;
+ document.getElementById("progress").textContent=done+" of "+boxes.length+" exercises completed";
+ boxes.forEach(b=>b.parentElement.classList.toggle("done",b.checked));
+}
+function resetWeek(){
+ document.querySelectorAll("input").forEach(b=>{
+  b.checked=false;localStorage.removeItem(b.id);
+ });
+ update();
+}
+update();
+</script>
+</body>
+</html>
