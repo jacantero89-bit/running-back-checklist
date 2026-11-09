@@ -1,32 +1,68 @@
-🏈 REACTION ACADEMY · TABLET TRAINING
-See it. Track it. Catch it.
-Football-inspired hand-eye coordination, visual tracking and reaction drills.
-0
-SCORE
-45
-SECONDS
-0
-STREAK
-0
-BEST
-Choose a drill
-Rookie
-🏈 Track the Pass
-Follow the moving football and tap to catch it.
-⚡ Flash Reaction
-Tap green targets; avoid red decoys.
-👀 Peripheral Vision
-React to targets appearing off-center.
-🏆 Training Mix
-A changing mix of all three drills.
-Track the Pass
-Ready
-
-RECEIVER
-Ready to train?
-Watch the football travel across the field. Track it with your eyes, then tap it while it is moving to make the catch.
-Start 45-second round
-Pick a drill and get ready.
-Restart round
-Reset score
-Keep sessions short (5–10 minutes), take breaks, and pair screen drills with real football catches and partner tosses. This game supplements—not replaces—catching an actual football.
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#071b2c">
+<title>Reaction Academy</title>
+<style>
+:root{--bg:#071b2c;--panel:#102b40;--green:#75f0a4;--gold:#ffd166;--red:#ff657a;--white:#f5fbff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#061522,#10324a);color:var(--white);font-family:system-ui,-apple-system,Arial,sans-serif;min-height:100vh;padding:18px}
+main{max-width:850px;margin:auto}.hero,.panel,.stat,.drill{background:#102b40;border:1px solid #28516a;border-radius:18px;padding:16px;margin-bottom:14px}
+h1{font-size:clamp(26px,6vw,42px);margin:0 0 5px}h2{margin:0 0 10px;font-size:21px}.sub{color:#b9d1df;margin:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{text-align:center;margin:0;padding:10px 4px}.num{font-size:28px;font-weight:800;color:var(--gold)}.label{font-size:11px;color:#b9d1df;letter-spacing:1px}
+.drills{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.drill{margin:0;text-align:left;cursor:pointer;color:var(--white);font:inherit}.drill strong{display:block;font-size:17px;margin-bottom:5px}.drill small{color:#b9d1df;line-height:1.35}.drill.active{border:2px solid var(--green);background:#163d4e}
+button{border:0;border-radius:12px;padding:13px 17px;font-weight:800;font-size:16px;background:var(--green);color:#082033;cursor:pointer;margin:5px 5px 0 0}button.secondary{background:#294b60;color:white}button:disabled{opacity:.45}
+#arena{height:300px;position:relative;overflow:hidden;border-radius:16px;background:repeating-linear-gradient(0deg,#176044 0 48px,#1b6d4d 49px 96px);border:2px solid #76c99a;touch-action:manipulation}
+#arena:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 49.5%,#ffffff44 50%,transparent 50.5%);pointer-events:none}
+#ball{display:none;position:absolute;width:54px;height:38px;border-radius:50%;background:#9b5429;border:3px solid #f3c58c;box-shadow:0 3px 10px #0008;font-size:22px;line-height:32px;text-align:center;touch-action:manipulation;z-index:2}
+#target{display:none;position:absolute;width:66px;height:66px;border-radius:50%;background:var(--green);border:5px solid white;box-shadow:0 0 20px #fff8;z-index:2}
+#message{font-weight:700;margin:12px 0;color:var(--gold);min-height:24px}
+.instructions{color:#c2d7e4;line-height:1.5}.footer{font-size:12px;color:#a8c2d1;line-height:1.5}
+@media(max-width:520px){body{padding:12px}.stats{gap:6px}.num{font-size:23px}.drills{grid-template-columns:1fr}#arena{height:260px}}
+</style>
+</head>
+<body>
+<main>
+<section class="hero"><h1>🏈 REACTION ACADEMY</h1><p class="sub">See it. Track it. Catch it.</p><p class="sub">Football-inspired hand-eye coordination, visual tracking and reaction drills.</p></section>
+<div class="stats">
+<div class="stat"><div class="num" id="score">0</div><div class="label">SCORE</div></div>
+<div class="stat"><div class="num" id="time">45</div><div class="label">SECONDS</div></div>
+<div class="stat"><div class="num" id="streak">0</div><div class="label">STREAK</div></div>
+<div class="stat"><div class="num" id="best">0</div><div class="label">BEST</div></div>
+</div>
+<section class="panel"><h2>Choose a drill</h2><div class="drills">
+<button class="drill active" data-drill="pass"><strong>🏈 Track the Pass</strong><small>Follow the moving football and tap to catch it.</small></button>
+<button class="drill" data-drill="flash"><strong>⚡ Flash Reaction</strong><small>Tap green targets; avoid red decoys.</small></button>
+<button class="drill" data-drill="peripheral"><strong>👀 Peripheral Vision</strong><small>React to targets appearing off-center.</small></button>
+<button class="drill" data-drill="mix"><strong>🏆 Training Mix</strong><small>A changing mix of all three drills.</small></button>
+</div></section>
+<section class="panel"><h2 id="drillTitle">Track the Pass</h2><div id="arena"><div id="ball">🏈</div><div id="target"></div></div><div id="message">Ready</div><p class="instructions" id="instructions">Watch the football travel across the field. Track it with your eyes, then tap it while it is moving to make the catch.</p><button id="start">Start 45-second round</button><button class="secondary" id="restart">Restart round</button><button class="secondary" id="reset">Reset score</button></section>
+<p class="footer">Keep sessions short (5–10 minutes), take breaks, and pair screen drills with real football catches and partner tosses. This game supplements—not replaces—catching an actual football.</p>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id),arena=$('arena'),ball=$('ball'),target=$('target');
+let drill='pass',score=0,streak=0,time=45,running=false,timer=null,move=null,round=0,kind='green';
+let best=Number(localStorage.getItem('reaction-academy-best')||0);$('best').textContent=best;
+const descriptions={pass:['Track the Pass','Watch the football travel across the field. Track it with your eyes, then tap it while it is moving to make the catch.'],flash:['Flash Reaction','Tap green targets as quickly as you can. Avoid red decoys—each wrong tap costs a point.'],peripheral:['Peripheral Vision','Keep your eyes near the center and react when a target appears toward the edges.'],mix:['Training Mix','A changing mix of football tracking, green-target reactions and peripheral vision.']};
+function choose(name){if(running)return;drill=name;document.querySelectorAll('.drill').forEach(b=>b.classList.toggle('active',b.dataset.drill===name));$('drillTitle').textContent=descriptions[name][0];$('instructions').textContent=descriptions[name][1];hideTargets();$('message').textContent='Ready';}
+document.querySelectorAll('.drill').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.drill)));
+function hideTargets(){ball.style.display='none';target.style.display='none';if(move)cancelAnimationFrame(move);move=null;}
+function update(){ $('score').textContent=score;$('streak').textContent=streak;$('time').textContent=time;$('best').textContent=best;}
+function point(good){if(!running)return;if(good){score+=10;streak++;if(score>best){best=score;localStorage.setItem('reaction-academy-best',best)}}else{score=Math.max(0,score-5);streak=0}update();}
+function place(el){let r=arena.getBoundingClientRect(),w=el.offsetWidth,h=el.offsetHeight;el.style.left=Math.max(0,Math.random()*(r.width-w))+'px';el.style.top=Math.max(0,Math.random()*(r.height-h))+'px';}
+function spawnTarget(red=false){kind=red?'red':'green';target.style.background=red?'#ff526b':'#75f0a4';place(target);target.style.display='block';}
+function animateBall(){let start=performance.now(),duration=1700+Math.random()*700,fromX=-55,toX=arena.clientWidth+55,y=25+Math.random()*(arena.clientHeight-75);ball.style.display='block';function frame(now){if(!running||drill==='flash'||drill==='peripheral')return;let p=Math.min(1,(now-start)/duration);ball.style.left=(fromX+(toX-fromX)*p)+'px';ball.style.top=y+'px';if(p<1)move=requestAnimationFrame(frame);else{if(running){streak=0;update();$('message').textContent='The pass got away—track the next one!';setTimeout(()=>{if(running)animateBall()},250)}}}move=requestAnimationFrame(frame);}
+function spawn(){if(!running)return;hideTargets();let active=drill==='mix'?['pass','flash','peripheral'][round++%3]:drill;if(active==='pass'){animateBall();$('message').textContent='Track the ball and tap to catch!'}else{spawnTarget(active==='flash'&&Math.random()<.28);$('message').textContent=kind==='red'?'Avoid the red decoy!':'Tap the green target!';}let delay=active==='pass'?2400:850+Math.random()*550;setTimeout(()=>{if(running)spawn()},delay);}
+function finish(){running=false;clearInterval(timer);hideTargets();$('message').textContent='Round complete! Final score: '+score+' — great work!';$('start').disabled=false;$('start').textContent='Start another round';}
+function start(){clearInterval(timer);hideTargets();score=0;streak=0;time=45;running=true;round=0;$('start').disabled=true;$('message').textContent='Get ready!';update();setTimeout(()=>{if(running)spawn()},600);timer=setInterval(()=>{if(!running)return;time--;update();if(time<=0)finish()},1000);}
+ball.addEventListener('pointerdown',e=>{e.stopPropagation();if(!running)return;point(true);$('message').textContent='Caught it! Great hands!';hideTargets();setTimeout(()=>{if(running)spawn()},180)});
+target.addEventListener('pointerdown',e=>{e.stopPropagation();if(!running)return;point(kind==='green');$('message').textContent=kind==='green'?'Nice reaction!':'Red decoy—stay sharp!';hideTargets();setTimeout(()=>{if(running)spawn()},180)});
+arena.addEventListener('pointerdown',e=>{if(!running)return;if(e.target===arena&&target.style.display==='block'){point(false);$('message').textContent='Missed it—stay focused!';hideTargets();setTimeout(()=>{if(running)spawn()},180)}});
+$('start').addEventListener('click',start);$('restart').addEventListener('click',start);$('reset').addEventListener('click',()=>{if(running)return;score=0;streak=0;best=0;localStorage.removeItem('reaction-academy-best');update();$('message').textContent='Score reset. Ready when you are.'});
+update();
+})();
+</script>
+</body>
+</html>
